@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matvey Volkov × CEO Persona Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Manrope:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0b0b0b;
+    --paper: #111110;
+    --white: #efeee9;
+    --grain: none;
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-io: cubic-bezier(.76, 0, .24, 1);
+    --pad-x: 4vw;
+    --gap: 5vh;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--ink); }
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px),
+      var(--ink);
+  }
+  body.locked { overflow: hidden; }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: var(--grain); background-size: 220px;
+    opacity: .06; mix-blend-mode: screen;
+  }
+
+  /* ================= ОТКРЫТИЕ САЙТА ================= */
+  .intro { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
+  .intro .half {
+    position: absolute; left: 0; right: 0; height: 50.2%;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px),
+      var(--ink);
+    transition: transform 1.5s var(--ease-io);
+  }
+  .intro .half::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: var(--grain); background-size: 200px; opacity: .08; mix-blend-mode: screen;
+  }
+  .intro .top { top: 0; }
+  .intro .bot { bottom: 0; }
+
+  .intro .seam {                                  /* светящаяся линия разреза */
+    position: absolute; left: 0; right: 0; top: 50%; height: 1px;
+    background: var(--white);
+    box-shadow: 0 0 18px 2px rgba(239,238,233,.45);
+    transform: scaleX(0);
+    transition: transform 1s var(--ease-io), opacity .6s ease;
+  }
+
+  .intro .core {
+    position: absolute; left: 50%; top: 50%;
+    width: 180px; height: 180px; margin: -90px 0 0 -90px;
+    transition: opacity .7s ease, transform 1s var(--ease-io), filter .7s ease;
+  }
+  .intro .core svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .intro .ring circle {
+    fill: none; stroke: var(--white); stroke-width: .6;
+    stroke-dasharray: 566; stroke-dashoffset: 566;
+    animation: draw 1.6s var(--ease-io) .2s forwards;
+  }
+  .intro .ring circle + circle { stroke-width: .35; opacity: .45; animation-delay: .45s; }
+  .intro .sweep {                                 /* стрелка как на плёночном лидере */
+    transform-origin: 90px 90px;
+    animation: sweep 1.1s linear .5s infinite;
+    opacity: 0;
+  }
+  .intro .cross { stroke: var(--white); stroke-width: .4; opacity: .35; }
+  .intro .fleur {
+    fill: var(--white);
+    opacity: 0; transform: scale(.85); transform-origin: 90px 90px;
+    animation: fleurIn 1.4s var(--ease-out) .9s forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes sweep { 0% { transform: rotate(0); opacity: .9 } 100% { transform: rotate(360deg); opacity: .9 } }
+  @keyframes fleurIn {
+    0% { opacity: 0; transform: scale(.85) } 20% { opacity: .9 } 26% { opacity: .2 } 32% { opacity: 1 }
+    40% { opacity: .5 } 48% { opacity: 1; } 100% { opacity: 1; transform: scale(1) }
+  }
+
+  body.phase-seam .intro .core { opacity: 0; transform: scale(.7); filter: blur(6px); }
+  body.phase-seam .intro .seam { transform: scaleX(1); }
+  body.phase-open .intro .top { transform: translateY(-100%); }
+  body.phase-open .intro .bot { transform: translateY(100%); }
+  body.phase-open .intro .seam { opacity: 0; }
+  body.phase-done .intro { display: none; }
+
+  /* ================= ЛЕНТА ПЛАШЕК ================= */
+  .stack {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; gap: var(--gap);
+    padding: var(--gap) var(--pad-x);
+  }
+  .plate {
+    position: relative; overflow: hidden;
+    width: 100%; height: 84vh; min-height: 440px;
+    border-radius: 4px;
+    will-change: clip-path, transform, opacity;
+  }
+  .plate.short { height: 52vh; }
+
+  /* --- видео --- */
+  .video { background: #1a1a19; }
+  .video .media {
+    position: absolute; inset: 0;
+    transition: transform 2.2s var(--ease-out);
+  }
+  .video video {
+    position: absolute; left: 0; top: -12%; width: 100%; height: 124%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.08) brightness(.9);
+    will-change: transform;
+  }
+  .video::before {
+    content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none;
+    background-image: var(--grain); background-size: 180px;
+    opacity: .15; mix-blend-mode: overlay;
+    animation: grain .6s steps(4) infinite;
+  }
+  .video::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 52%, rgba(10,10,10,.5) 100%);
+    animation: flicker 5s infinite;
+  }
+  @keyframes grain {
+    0% { transform: translate(0,0) } 25% { transform: translate(-6%,4%) }
+    50% { transform: translate(5%,-7%) } 75% { transform: translate(-3%,6%) } 100% { transform: translate(0,0) }
+  }
+  @keyframes flicker { 0%,100% { opacity: 1 } 8% { opacity: .9 } 10% { opacity: 1 } 63% { opacity: .93 } 64% { opacity: 1 } }
+
+  /* --- надпись на первой плашке --- */
+  .hero-shade {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(to top, rgba(8,8,8,.72) 0%, rgba(8,8,8,.25) 38%, transparent 60%);
+  }
+  .hero-title {
+    position: absolute; z-index: 2;
+    left: clamp(20px, 4vw, 64px); right: clamp(20px, 4vw, 64px); bottom: clamp(24px, 6vh, 72px);
+    color: var(--white);
+  }
+  .hero-title h1 {                                  /* Bodoni — контрастная парижская антиква, как у модных домов */
+    font-family: "Bodoni Moda", "Didot", "Times New Roman", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: clamp(42px, 10.5vw, 200px);
+    line-height: .9;
+    letter-spacing: -.02em;
+    text-transform: uppercase;
+  }
+  .hero-title .line:nth-child(2) { font-style: italic; }
+  .hero-title .line { display: block; overflow: hidden; padding: 0 .12em .06em 0; white-space: nowrap; }
+  .hero-title .line:nth-child(2) { padding-left: .9em; }        /* лёгкий сдвиг второй строки */
+  .hero-title .ch { display: inline-block; transform: translateY(105%); transition: transform 1.3s var(--ease-out); }
+  .hero-title .collab {
+    display: flex; align-items: center; gap: 18px;
+    margin-top: clamp(14px, 2.4vh, 28px);
+    font-family: "Manrope", system-ui, sans-serif; font-weight: 500;
+    font-size: clamp(11px, 1vw, 14px); letter-spacing: .42em; text-transform: uppercase;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 1.2s ease 1.1s, transform 1.4s var(--ease-out) 1.1s, letter-spacing 2s var(--ease-out) 1.1s;
+  }
+  .hero-title .collab .x {
+    font-family: "Cormorant Garamond", serif; font-style: italic; font-weight: 300;
+    font-size: 2.2em; letter-spacing: 0; line-height: 1;
+  }
+  .hero-title .rule {
+    height: 1px; flex: 0 0 clamp(40px, 8vw, 140px); background: rgba(239,238,233,.6);
+    transform: scaleX(0); transform-origin: left; transition: transform 1.6s var(--ease-io) 1.2s;
+  }
+  .hero.in .hero-title .ch { transform: none; }
+  .hero.in .hero-title .collab { opacity: .92; transform: none; letter-spacing: .32em; }
+  .hero.in .hero-title .rule { transform: scaleX(1); }
+
+  /* --- надпись по центру третьей плашки --- */
+  .agency-shade {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(8,8,8,.45), transparent 75%);
+  }
+  .agency-title {
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; color: var(--white); padding: 0 20px;
+  }
+  .agency-title h2 {
+    font-family: "Bodoni Moda", "Didot", serif; font-weight: 400;
+    font-size: clamp(48px, 9vw, 168px); line-height: .92; letter-spacing: -.02em;
+  }
+  .agency-title .line { display: block; overflow: hidden; padding: 0 .12em .22em; margin-bottom: -.16em; }
+  .agency-title .line > span { display: inline-block; transform: translateY(110%); transition: transform 1.6s var(--ease-out) 1.1s; }
+  .agency-title .line:nth-child(2) > span { font-style: italic; transition-delay: 1.3s; }
+  .agency-title .since {
+    display: flex; align-items: center; gap: 18px; margin-top: clamp(18px, 3vh, 34px);
+    font-family: "Manrope", sans-serif; font-weight: 500; text-transform: uppercase;
+    font-size: clamp(11px, .95vw, 14px); letter-spacing: .5em;
+    opacity: 0; transition: opacity 1.2s ease 2s, letter-spacing 2.2s var(--ease-out) 2s;
+  }
+  .agency-title .since .rule {
+    width: clamp(28px, 5vw, 80px); height: 1px; background: rgba(239,238,233,.6);
+    transform: scaleX(0); transition: transform 1.4s var(--ease-io) 2.2s;
+  }
+  .agency-title .since .rule:first-child { transform-origin: right; }
+  .agency-title .since .rule:last-child { transform-origin: left; }
+  .agency.in .agency-title .line > span { transform: none; }
+  .agency.in .agency-title .since { opacity: .9; letter-spacing: .34em; }
+  .agency.in .agency-title .since .rule { transform: scaleX(1); }
+
+  /* --- рваная бумага --- */
+  .paper { overflow: visible; }
+  .tear { position: absolute; inset: 0; }
+  .tear .shade {                                  /* тень листа той же рваной формы */
+    position: absolute; inset: 0; background: #000;
+    transform: translateY(16px); filter: blur(16px); opacity: .7;
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  }
+  .tear .edge, .tear .sheet {
+    position: absolute; inset: 0;
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  }
+  .tear .edge {                                   /* светлая волокнистая кромка разрыва */
+    background: #8a8883;
+  }
+  .tear .edge::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: var(--grain); background-size: 90px; opacity: .45; mix-blend-mode: overlay;
+  }
+  .tear .sheet {
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0 1px, transparent 1px 2px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px),
+      var(--paper);
+    box-shadow: inset 0 0 140px rgba(0,0,0,.75);
+  }
+  .tear .sheet::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: var(--grain); background-size: 160px;
+    opacity: .07; mix-blend-mode: screen;
+  }
+  .tear .sheet::after {                            /* мягкий блик, следует за курсором */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 40%), rgba(255,255,255,.045), transparent 60%);
+  }
+
+  /* ================= ПЛАШКА «О ВОЛКОВЕ» ================= */
+  .plate.about { height: auto; min-height: 84vh; }
+  .about .content {
+    position: relative; z-index: 2;
+    min-height: 84vh;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: center; gap: clamp(24px, 4vw, 72px);
+    padding: clamp(64px, 10vh, 120px) clamp(24px, 5vw, 88px);
+    color: var(--white);
+  }
+
+  /* фото — как отпечаток, приколотый к листу */
+  .about .photo {
+    position: relative; justify-self: center;
+    width: min(100%, 460px); aspect-ratio: 1061 / 1146;
+    transform: rotate(-2.5deg) translateY(40px); opacity: 0;
+    transition: transform 1.8s var(--ease-out) .25s, opacity 1.2s ease .25s;
+  }
+  .about .photo .print {
+    position: absolute; inset: 0; overflow: hidden;
+    background: #d9d7d0; padding: 10px 10px 34px;       /* белые поля фотоотпечатка */
+    box-shadow: 0 30px 50px rgba(0,0,0,.7), 0 2px 4px rgba(0,0,0,.5);
+  }
+  .about .photo img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: grayscale(1) contrast(1.15) brightness(.95);
+  }
+  .about .photo .print::after {                     /* зерно поверх снимка */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: var(--grain); background-size: 140px; opacity: .14; mix-blend-mode: multiply;
+  }
+  .about .photo .tape {
+    position: absolute; top: -14px; left: 50%; width: 110px; height: 30px; margin-left: -55px;
+    background: rgba(220,218,210,.28); backdrop-filter: blur(1px);
+    transform: rotate(3deg); z-index: 1;
+    clip-path: polygon(3% 8%, 97% 0, 100% 92%, 1% 100%);
+  }
+
+  .about .text { max-width: 520px; }
+  .about .text h2 {
+    font-family: "Cormorant Garamond", serif; font-weight: 300;
+    font-size: clamp(44px, 5.6vw, 104px); line-height: .9; letter-spacing: -.01em;
+  }
+  .about .text h2 .line { display: block; overflow: hidden; padding-bottom: .05em; }
+  .about .text h2 .line > span { display: inline-block; transform: translateY(105%); transition: transform 1.4s var(--ease-out); }
+  .about .text h2 .line:nth-child(2) > span { transition-delay: .12s; font-style: italic; }
+  .about .text ul {
+    list-style: none; margin-top: clamp(24px, 4vh, 44px);
+    border-top: 1px solid rgba(239,238,233,.18);
+  }
+  .about .text li {
+    display: flex; gap: 16px; align-items: baseline;
+    padding: 16px 0; border-bottom: 1px solid rgba(239,238,233,.18);
+    font-family: "Manrope", sans-serif; font-size: clamp(14px, 1.15vw, 17px); letter-spacing: .04em;
+    opacity: 0; transform: translateX(-18px);
+    transition: opacity 1s ease, transform 1.2s var(--ease-out);
+  }
+  .about .text li::before { content: "–"; opacity: .5; }
+  .about .text li:nth-child(1) { transition-delay: .55s } .about .text li:nth-child(2) { transition-delay: .7s }
+  .about .text li:nth-child(3) { transition-delay: .85s }
+  .about .text a { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease-out); }
+  .about .text a:hover { background-size: 100% 1px; }
+
+  /* всадник со знаменем: сначала прорисовывается контуром, потом заливается белым */
+  .about .knight { width: clamp(220px, 24vw, 400px); height: auto; overflow: visible; align-self: center; }
+  .about .knight .ink { fill: var(--white); opacity: 0; transition: opacity 1.4s ease 2.4s; }
+  .about .knight .line {
+    fill: none; stroke: var(--white); stroke-width: 1.1; vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1;
+    transition: stroke-dashoffset 2.2s var(--ease-io), opacity 1.2s ease 2.8s;
+  }
+  .about .knight .flag { transform-box: fill-box; transform-origin: 0% 50%; }
+  .about.in .knight .flag { animation: flutter 3.2s ease-in-out 3.2s infinite; }
+  .about.in .knight .flag.b { animation-duration: 2.7s; animation-delay: 3.5s; }
+  @keyframes flutter {
+    0%, 100% { transform: skewY(0) scaleY(1) }
+    30% { transform: skewY(-4deg) scaleY(1.04) }
+    65% { transform: skewY(3deg) scaleY(.97) }
+  }
+
+  .about.in .photo { transform: rotate(-2.5deg); opacity: 1; }
+  .about.in .text h2 .line > span { transform: none; }
+  .about.in .text li { opacity: 1; transform: none; }
+  .about.in .knight .line { stroke-dashoffset: 0; opacity: .0; }
+  .about.in .knight .ink { opacity: 1; }
+
+  @media (max-width: 900px) {
+    .about .content { grid-template-columns: 1fr; justify-items: start; padding-top: 80px; padding-bottom: 80px; }
+    .about .photo { width: min(78%, 360px); }
+    .about .knight { width: min(64%, 300px); margin-top: 8px; }
+  }
+
+  /* ================= УНИКАЛЬНЫЕ ПОЯВЛЕНИЯ ================= */
+  .fx { transition: clip-path 1.8s var(--ease-io), transform 1.8s var(--ease-out), opacity 1.4s ease, filter 1.6s ease; }
+
+  /* 1 — открывается вместе с занавесом */
+  [data-fx="hero"] .media { transform: scale(1.25); }
+  [data-fx="hero"].in .media { transform: scale(1); transition-duration: 2.8s; }
+
+  /* 2 — бумага приподнимается, как лист со стола */
+  [data-fx="lift"] { opacity: 0; transform: perspective(1400px) rotateX(14deg) translateY(90px); transform-origin: 50% 100%; }
+  [data-fx="lift"].in { opacity: 1; transform: none; }
+
+  /* 3 — занавес снизу вверх */
+  [data-fx="curtain"] { clip-path: inset(100% 0 0 0); }
+  [data-fx="curtain"] .media { transform: scale(1.3) translateY(8%); }
+  [data-fx="curtain"].in { clip-path: inset(0 0 0 0); }
+  [data-fx="curtain"].in .media { transform: none; }
+
+  /* 4 — выезжает слева с лёгким наклоном */
+  [data-fx="slide"] { opacity: 0; transform: translateX(-12%) skewX(4deg); }
+  [data-fx="slide"].in { opacity: 1; transform: none; }
+
+  /* 5 — диафрагма старой кинокамеры */
+  [data-fx="iris"] { clip-path: circle(0% at 50% 50%); }
+  [data-fx="iris"] .media { transform: scale(1.4) rotate(-3deg); }
+  [data-fx="iris"].in { clip-path: circle(75% at 50% 50%); transition-duration: 2.2s; }
+  [data-fx="iris"].in .media { transform: none; }
+
+  /* 6 — лист разворачивается сверху */
+  [data-fx="unfold"] { clip-path: inset(0 0 100% 0); opacity: .4; }
+  [data-fx="unfold"].in { clip-path: inset(0 0 0 0); opacity: 1; }
+
+  /* 7 — раскрывается от центра к краям */
+  [data-fx="split"] { clip-path: inset(0 50% 0 50%); }
+  [data-fx="split"] .media { transform: scale(1.18); filter: blur(8px); }
+  [data-fx="split"].in { clip-path: inset(0 0 0 0); }
+  [data-fx="split"].in .media { transform: none; filter: none; transition: transform 2.4s var(--ease-out), filter 1.6s ease; }
+
+  /* 8 — проявляется из размытия */
+  [data-fx="develop"] { opacity: 0; filter: blur(14px) brightness(1.6); transform: scale(.96); }
+  [data-fx="develop"].in { opacity: 1; filter: none; transform: none; }
+
+  @media (max-width: 700px) {
+    :root { --pad-x: 12px; --gap: 12px; }
+    .hero-title .line:nth-child(2) { padding-left: .5em; }
+    .hero-title .collab { gap: 10px; letter-spacing: .24em; }
+    .hero.in .hero-title .collab { letter-spacing: .2em; }
+    .hero-title .rule { flex-basis: 28px; }
+    .plate { height: 78vh; min-height: 400px; }
+    .plate.short { height: 44vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .fx, .fx .media { opacity: 1 !important; transform: none !important; clip-path: none !important; filter: none !important; }
+    .intro { display: none; }
+  }
+</style>
+</head>
+<body class="locked">
+
+  <!-- открытие -->
+  <div class="intro" aria-hidden="true">
+    <div class="half top"></div>
+    <div class="half bot"></div>
+    <div class="seam"></div>
+    <div class="core">
+      <svg class="ring" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r="88" transform="rotate(-90 90 90)"/>
+        <circle cx="90" cy="90" r="74" transform="rotate(-90 90 90)"/>
+      </svg>
+      <svg viewBox="0 0 180 180">
+        <path class="cross" d="M90 0V180M0 90H180"/>
+        <line class="sweep" x1="90" y1="90" x2="90" y2="4" stroke="#efeee9" stroke-width=".6"/>
+      </svg>
+      <svg viewBox="0 0 180 180">
+        <g class="fleur"><svg x="66" y="61" width="48" height="58" viewBox="0 0 100 120">
+          <path d="M50 4C61 18 66 38 57 60H43C34 38 39 18 50 4Z"/>
+          <path d="M43 62C30 61 12 53 10 36C9 24 20 18 28 25C20 27 19 38 27 44C33 49 39 51 45 53Z"/>
+          <path d="M57 62C70 61 88 53 90 36C91 24 80 18 72 25C80 27 81 38 73 44C67 49 61 51 55 53Z"/>
+          <rect x="28" y="60" width="44" height="8" rx="1.5"/>
+          <path d="M44 70L50 96L56 70Z"/>
+          <path d="M42 70C38 80 30 86 22 84C28 90 40 88 45 78Z"/>
+          <path d="M58 70C62 80 70 86 78 84C72 90 60 88 55 78Z"/>
+        </svg></g>
+      </svg>
+    </div>
+  </div>
+
+  <main class="stack">
+
+    <!-- 1 · Эйфелева башня в подсветке, вид с Трокадеро -->
+    <section class="plate video fx hero" data-fx="hero">
+      <div class="media"><video autoplay muted loop playsinline preload="auto"
+        src="https://videos.pexels.com/video-files/26612921/11973661_1920_1080_25fps.mp4"></video></div>
+      <div class="hero-shade"></div>
+      <div class="hero-title">
+        <h1 aria-label="Matvey Volkov"><span class="line" data-split>MATVEY</span><span class="line" data-split>VOLKOV</span></h1>
+        <div class="collab"><span class="x">×</span><span class="rule"></span><span>CEO PERSONA AGENCY</span></div>
+      </div>
+    </section>
+
+    <!-- 2 · бумага -->
+    <section class="plate paper fx about" data-fx="lift" id="about">
+      <div class="tear" aria-hidden="true"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div>
+      <div class="content">
+        <figure class="photo">
+          <span class="tape" aria-hidden="true"></span>
+          <div class="print"><img src="assets/volkov.jpg" alt="Матвей Волков" loading="lazy"></div>
+        </figure>
+
+        <div class="text">
+          <h2><span class="line"><span>Matvey</span></span><span class="line"><span>Volkov</span></span></h2>
+          <ul>
+            <li>Social Media Producer</li>
+            <li>&gt;1 year in sphere</li>
+            <li><a href="https://instagram.com/motvolkov" target="_blank" rel="noopener">@motvolkov</a></li>
+          </ul>
+        </div>
+
+        <svg class="knight" id="knight" viewBox="-4 -4 230 193" aria-hidden="true"></svg>
+      </div>
+    </section>
+
+    <!-- 3 · ночной Париж с Эйфелевой башни + Persona Agency -->
+    <section class="plate video fx agency" data-fx="curtain">
+      <div class="media"><video muted loop playsinline preload="metadata"
+        src="https://videos.pexels.com/video-files/34948069/14804253_1280_720_60fps.mp4"></video></div>
+      <div class="agency-shade" aria-hidden="true"></div>
+      <div class="agency-title">
+        <h2><span class="line"><span>Persona</span></span><span class="line"><span>Agency</span></span></h2>
+        <p class="since"><span class="rule"></span><span>since 2025</span><span class="rule"></span></p>
+      </div>
+    </section>
+
+    <!-- 4 · бумага -->
+    <section class="plate paper fx" data-fx="slide" aria-hidden="true"><div class="tear"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div></section>
+
+    <!-- 5 · старая парижская улочка -->
+    <section class="plate video fx" data-fx="iris" aria-hidden="true">
+      <div class="media"><video muted loop playsinline preload="metadata"
+        src="https://videos.pexels.com/video-files/29098991/12572037_1920_1080_25fps.mp4"></video></div>
+    </section>
+
+    <!-- 6 · бумага -->
+    <section class="plate paper fx" data-fx="unfold" aria-hidden="true"><div class="tear"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div></section>
+
+    <!-- 7 · Париж с высоты -->
+    <section class="plate video fx" data-fx="split" aria-hidden="true">
+      <div class="media"><video muted loop playsinline preload="metadata"
+        src="https://videos.pexels.com/video-files/36492322/15473977_1920_1080_25fps.mp4"></video></div>
+    </section>
+
+    <!-- 8 · бумага (подвал) -->
+    <section class="plate paper fx short" data-fx="develop" aria-hidden="true"><div class="tear"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div></section>
+
+  </main>
+
+<script src="assets/knight.js"></script>
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const body = document.body;
+
+  /* зерно для бумаги и плёнки */
+  (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 200;
+    const ctx = c.getContext('2d'); const img = ctx.createImageData(200, 200);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = Math.random() * 255;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    document.documentElement.style.setProperty('--grain', `url(${c.toDataURL()})`);
+  })();
+
+  /* надпись: каждая буква выезжает снизу со своей задержкой */
+  document.querySelectorAll('[data-split]').forEach((line, li) => {
+    const txt = line.textContent; line.textContent = '';
+    [...txt].forEach((c, i) => {
+      const s = document.createElement('span');
+      s.className = 'ch'; s.textContent = c;
+      s.style.transitionDelay = `${.15 + li * .18 + i * .055}s`;
+      s.setAttribute('aria-hidden', 'true');
+      line.appendChild(s);
+    });
+  });
+
+  /* всадник: контур каждой части рисуется по очереди, затем заливка.
+     Хвосты знамени (отдельные куски справа) развеваются. */
+  (() => {
+    const svg = document.getElementById('knight');
+    if (!svg || !window.KNIGHT_PATHS) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    const mk = (tag, attrs, parent) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      parent.appendChild(n); return n;
+    };
+    const body = mk('g', {}, svg);
+    const bodyInk = mk('path', { class: 'ink', 'fill-rule': 'evenodd' }, body);
+    const bodyD = [];
+    let flagN = 0;
+    KNIGHT_PATHS.forEach((d, i) => {
+      const probe = mk('path', { d }, svg);
+      const bb = probe.getBBox(); probe.remove();
+      const delay = `${.35 + i * .12}s`;
+      if (bb.x > 150) {                                   // хвост знамени — своя группа, чтобы развеваться
+        const g = mk('g', { class: 'flag' + (flagN++ % 2 ? ' b' : '') }, svg);
+        mk('path', { class: 'ink', d }, g);
+        mk('path', { class: 'line', d, pathLength: 1 }, g).style.transitionDelay = `${delay}, 2.8s`;
+      } else {
+        bodyD.push(d);
+        mk('path', { class: 'line', d, pathLength: 1 }, body).style.transitionDelay = `${delay}, 2.8s`;
+      }
+    });
+    bodyInk.setAttribute('d', bodyD.join(''));
+  })();
+
+  const plates = [...document.querySelectorAll('.plate')];
+  const hero = plates[0];
+
+  /* появление плашек при прокрутке; видео играет только на экране.
+     Считаем по координатам, а не IntersectionObserver: тот учитывает clip-path,
+     и плашки, «закрытые» обрезкой, для него никогда не видны. */
+  const checkPlates = () => {
+    const vh = innerHeight;
+    for (const p of plates) {
+      const r = p.getBoundingClientRect();
+      const onScreen = r.top < vh && r.bottom > 0;
+      if (r.top < vh * .82 && r.bottom > vh * .1 && (p !== hero || body.classList.contains('phase-open'))) p.classList.add('in');
+      const v = p.querySelector('video');
+      if (v) {
+        if (onScreen && v.paused) v.play().catch(() => {});
+        else if (!onScreen && !v.paused) v.pause();
+      }
+    }
+  };
+
+  /* открытие: кольцо → вспышка эмблемы → световой шов → занавес расходится */
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const heroReady = new Promise(r => {
+    const v = hero.querySelector('video');
+    if (v.readyState >= 3) return r();
+    v.addEventListener('canplay', r, { once: true });
+    setTimeout(r, 3500);                         // не ждём медленную сеть дольше
+  });
+
+  (async () => {
+    if (reduce) { body.classList.remove('locked'); plates.forEach(p => p.classList.add('in')); return; }
+    window.scrollTo(0, 0);
+    await Promise.all([sleep(2300), heroReady]);
+    body.classList.add('phase-seam');
+    await sleep(900);
+    body.classList.add('phase-open');
+    hero.classList.add('in');
+    await sleep(1500);
+    body.classList.add('phase-done');
+    body.classList.remove('locked');
+    checkPlates();
+  })();
+
+  checkPlates();
+  addEventListener('scroll', checkPlates, { passive: true });
+  addEventListener('resize', checkPlates);
+
+  /* плавный параллакс внутри видео */
+  const vids = plates.filter(p => p.classList.contains('video')).map(p => ({ p, v: p.querySelector('video'), y: 0 }));
+  const tick = () => {
+    const vh = innerHeight;
+    for (const o of vids) {
+      const r = o.p.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > vh + 100) continue;
+      const target = ((r.top + r.height / 2) - vh / 2) / vh * -9;   // в процентах
+      o.y += (target - o.y) * .08;
+      o.v.style.transform = `translate3d(0, ${o.y.toFixed(3)}%, 0)`;
+    }
+    requestAnimationFrame(tick);
+  };
+  if (!reduce) requestAnimationFrame(tick);
+
+  /* блик на бумаге за курсором */
+  document.querySelectorAll('.paper').forEach(p => {
+    const s = p.querySelector('.sheet');
+    p.addEventListener('pointermove', e => {
+      const r = p.getBoundingClientRect();
+      s.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      s.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+
+  /* рваные края: у каждого листа своя форма разрыва.
+     edge — внешний контур (светлая кромка), sheet — внутренний, чуть глубже */
+  const rand = seed => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  const tornEdge = (len, amp, rnd, step) => {
+    const pts = []; let x = 0, drift = 0;
+    while (x < len) {
+      drift = drift * .6 + (rnd() - .5) * amp * .9;          // плавная «волна» разрыва
+      const spike = rnd() < .18 ? rnd() * amp * .9 : 0;       // редкие волокнистые зубцы
+      pts.push([x, Math.max(0, Math.min(amp * 2, amp + drift + spike))]);
+      x += step * (.5 + rnd());
+    }
+    pts.push([len, amp]);
+    return pts;
+  };
+  const tornPath = (w, h, rnd, amp, inset) => {
+    const top = tornEdge(w, amp, rnd, 9), bot = tornEdge(w, amp, rnd, 9);
+    const d = [];                                   // бока ровные — рвутся только верх и низ
+    top.forEach(([x, y]) => d.push(`${x.toFixed(1)},${(y + inset).toFixed(1)}`));
+    bot.reverse().forEach(([x, y]) => d.push(`${x.toFixed(1)},${(h - y - inset).toFixed(1)}`));
+    return d.join(' ');
+  };
+  const tearAll = () => {
+    document.querySelectorAll('.tear').forEach((t, i) => {
+      const w = Math.round(t.offsetWidth), h = Math.round(t.offsetHeight);
+      if (!w || !h) return;
+      const amp = Math.min(30, Math.max(14, w * .016));
+      const mask = (seed, inset) => {
+        const pts = tornPath(w, h, rand(seed), amp, inset);
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polygon points="${pts}"/></svg>`;
+        return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+      };
+      for (const [el, seed, inset] of [[t.querySelector('.shade'), 101 + i * 7, 0], [t.querySelector('.edge'), 101 + i * 7, 0], [t.querySelector('.sheet'), 202 + i * 7, 6]]) {
+        const m = mask(seed, inset);
+        el.style.webkitMaskImage = m; el.style.maskImage = m;
+      }
+    });
+  };
+  tearAll();
+  addEventListener('load', tearAll);                 // высота плашки с текстом меняется после загрузки шрифтов
+  document.fonts && document.fonts.ready.then(tearAll);
+  let tearTimer; addEventListener('resize', () => { clearTimeout(tearTimer); tearTimer = setTimeout(tearAll, 200); });
+</script>
+</body>
+</html>
