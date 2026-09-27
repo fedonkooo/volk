@@ -438,10 +438,6 @@
     background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; padding-bottom: 4px; transition: background-size .6s var(--ease-out), opacity .3s; }
   .consult .link:hover { background-size: 100% 1px; opacity: 1; }
 
-  .consult .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-    margin-top: clamp(60px, 11vh, 120px); padding-top: 22px; border-top: 1px solid rgba(239,238,233,.14);
-    font-family: "Manrope", sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: 0; transition: opacity 1.2s ease 2s; }
-  .consult .foot svg { width: 14px; height: 17px; fill: var(--white); vertical-align: -3px; margin-right: 10px; }
 
   /* парижский фонарь: прорисовывается линиями снизу вверх, затем загорается и мерцает; вокруг света кружит мотылёк */
   .consult .lamp {
@@ -495,11 +491,104 @@
   .consult.in .steps li { opacity: 1; transform: none; }
   .consult.in .steps li::before { transform: scaleX(1); }
   .consult.in .cta { opacity: 1; transform: none; }
-  .consult.in .foot { opacity: .5; }
 
   @media (max-width: 900px) {
     .consult .steps { grid-template-columns: 1fr; }
     .consult .btn { padding: 20px 26px; letter-spacing: .14em; }
+  }
+
+  /* --- «FAQ» на видео с Прагой --- */
+  .faq-title {
+    position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--white); text-align: center; perspective: 900px;
+  }
+  .faq-title .big { font-family: "Bodoni Moda", serif; font-weight: 400; font-size: clamp(90px, 20vw, 360px); line-height: .85; letter-spacing: -.02em; }
+  .faq-title .big .ch {                               /* буквы переворачиваются в 3D по одной */
+    display: inline-block; transform: rotateX(-95deg) translateY(20%); transform-origin: 50% 100%; opacity: 0;
+    transition: transform 1.5s var(--ease-out), opacity .8s ease;
+  }
+  .faq-title .sub {
+    margin-top: clamp(14px, 2.4vh, 26px);
+    font-family: "Bodoni Moda", serif; font-style: italic; font-size: clamp(18px, 2.2vw, 36px);
+    letter-spacing: .3em; opacity: 0; transition: opacity 1.4s ease 2.1s, letter-spacing 2.4s var(--ease-out) 2.1s;
+  }
+  .faq-plate.in .faq-title .big .ch { transform: none; opacity: 1; }
+  .faq-plate.in .faq-title .sub { opacity: .92; letter-spacing: .02em; }
+
+  /* ================= ПЛАШКА FAQ: вопросы раскрываются при наведении (и по нажатию) ================= */
+  .plate.faq { height: auto; min-height: 84vh; }
+  .faq .content { position: relative; z-index: 2; padding: clamp(80px, 13vh, 140px) clamp(22px, 6vw, 110px) clamp(40px, 7vh, 70px); color: var(--white); }
+  .faq .qmark {                                       /* большой знак вопроса, медленно парит на фоне */
+    position: absolute; z-index: 1; right: clamp(10px, 5vw, 90px); top: clamp(20px, 6vh, 80px);
+    font-family: "Bodoni Moda", serif; font-style: italic; font-size: clamp(180px, 28vw, 460px); line-height: 1;
+    color: transparent; -webkit-text-stroke: 1px rgba(239,238,233,.16); pointer-events: none;
+    animation: qfloat 9s ease-in-out infinite;
+  }
+  @keyframes qfloat { 0%, 100% { transform: translateY(0) rotate(-4deg) } 50% { transform: translateY(-18px) rotate(3deg) } }
+  .faq .kicker {
+    display: flex; align-items: center; gap: 12px;
+    font-family: "Manrope", sans-serif; font-weight: 500; font-size: 12px; letter-spacing: .38em; text-transform: uppercase;
+    opacity: 0; transition: opacity 1s ease .3s;
+  }
+  .faq .kicker .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--white); animation: pulse 2.4s ease-in-out infinite; }
+  .faq h2 { margin-top: clamp(16px, 2.6vh, 28px); font-family: "Bodoni Moda", serif; font-weight: 400; font-size: clamp(40px, 6vw, 112px); line-height: .95; letter-spacing: -.02em; }
+  .faq h2 .line { display: block; overflow: hidden; padding: 0 .1em .14em 0; margin-bottom: -.1em; }
+  .faq h2 .line > span { display: inline-block; transform: translateY(110%); transition: transform 1.4s var(--ease-out) .4s; }
+  .faq h2 .line:nth-child(2) > span { font-style: italic; transition-delay: .55s; }
+
+  .faq .list { margin-top: clamp(36px, 6vh, 70px); max-width: 980px; }
+  .faq .qa { position: relative; opacity: 0; transform: translateY(20px); transition: opacity 1s ease var(--d), transform 1.3s var(--ease-out) var(--d); }
+  .faq .qa::before, .faq .qa:last-child::after {        /* линии прорисовываются слева направо */
+    content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(239,238,233,.2);
+    transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease-io) var(--d), background .4s ease;
+  }
+  .faq .qa::before { top: 0; }
+  .faq .qa:last-child::after { bottom: 0; }
+  .faq .q {
+    all: unset; box-sizing: border-box; width: 100%; cursor: pointer;
+    display: grid; grid-template-columns: 56px 1fr 28px; align-items: center; gap: 12px;
+    padding: clamp(20px, 3.2vh, 30px) 0;
+  }
+  .faq .q:focus-visible { outline: 1px solid rgba(239,238,233,.6); outline-offset: 4px; }
+  .faq .q .n { font-family: "Bodoni Moda", serif; font-style: italic; font-size: 18px; opacity: .55; transition: opacity .4s ease; }
+  .faq .q .t { font-family: "Bodoni Moda", serif; font-weight: 400; font-size: clamp(22px, 2.4vw, 38px); line-height: 1.15; transition: transform .6s var(--ease-out); }
+  .faq .q .pm { position: relative; width: 22px; height: 22px; justify-self: end; transition: transform .6s var(--ease-out); }
+  .faq .q .pm::before, .faq .q .pm::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--white); }
+  .faq .q .pm::after { transform: rotate(90deg); transition: transform .6s var(--ease-out); }
+  .faq .a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .7s var(--ease-io); }
+  .faq .a > div { overflow: hidden; }
+  .faq .a p {
+    padding: 0 40px clamp(22px, 3.4vh, 32px) 68px; max-width: 60ch;
+    font-family: "Manrope", sans-serif; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6;
+    opacity: 0; transform: translateY(-8px); transition: opacity .5s ease, transform .7s var(--ease-out);
+  }
+  .faq .qa:hover::before, .faq .qa.open::before { background: rgba(239,238,233,.7); }
+  .faq .qa:hover .n, .faq .qa.open .n { opacity: 1; }
+  .faq .qa:hover .t, .faq .qa.open .t { transform: translateX(10px); }
+  .faq .qa:hover .pm, .faq .qa.open .pm { transform: rotate(180deg); }
+  .faq .qa:hover .pm::after, .faq .qa.open .pm::after { transform: rotate(0deg); }       /* плюс превращается в минус */
+  .faq .qa:hover .a, .faq .qa.open .a { grid-template-rows: 1fr; }
+  .faq .qa:hover .a p, .faq .qa.open .a p { opacity: .82; transform: none; transition-delay: .15s; }
+
+  .faq .more { display: inline-flex; gap: 12px; margin-top: clamp(36px, 6vh, 64px); color: var(--white); text-decoration: none;
+    font-family: "Manrope", sans-serif; font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; padding-bottom: 6px;
+    opacity: 0; transition: opacity 1s ease 1.4s, background-size .6s var(--ease-out); }
+  .faq .more:hover { background-size: 100% 1px; }
+  .faq .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-top: clamp(60px, 11vh, 120px); padding-top: 22px; border-top: 1px solid rgba(239,238,233,.14);
+    font-family: "Manrope", sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: 0; transition: opacity 1.2s ease 1.8s; }
+  .faq .foot svg { width: 14px; height: 17px; fill: var(--white); vertical-align: -3px; margin-right: 10px; }
+
+  .faq.in .kicker { opacity: .85; }
+  .faq.in h2 .line > span { transform: none; }
+  .faq.in .qa { opacity: 1; transform: none; }
+  .faq.in .qa::before, .faq.in .qa:last-child::after { transform: scaleX(1); }
+  .faq.in .more { opacity: .85; }
+  .faq.in .foot { opacity: .5; }
+  @media (max-width: 900px) {
+    .faq .q { grid-template-columns: 38px 1fr 22px; }
+    .faq .a p { padding: 0 0 22px 50px; }
   }
 
   /* --- рваная бумага --- */
@@ -780,6 +869,24 @@
   [data-fx="develop"] { opacity: 0; filter: blur(14px) brightness(1.6); transform: scale(.96); }
   [data-fx="develop"].in { opacity: 1; filter: none; transform: none; }
 
+  /* 9 — жалюзи: кадр открывается горизонтальными полосками */
+  @property --bl { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+  [data-fx="blinds"] {
+    --bl: 0%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 var(--bl), transparent var(--bl));
+            mask-image: linear-gradient(to bottom, #000 var(--bl), transparent var(--bl));
+    -webkit-mask-size: 100% 12.5%; mask-size: 100% 12.5%;
+    -webkit-mask-repeat: repeat-y; mask-repeat: repeat-y;
+    transition: --bl 1.9s var(--ease-io);
+  }
+  [data-fx="blinds"] .media { transform: scale(1.22); }
+  [data-fx="blinds"].in { --bl: 100%; }
+  [data-fx="blinds"].in .media { transform: none; transition-duration: 2.6s; }
+
+  /* 10 — страница перелистывается слева, как в книге */
+  [data-fx="page"] { opacity: 0; transform: perspective(1600px) rotateY(-16deg) translateX(-5%); transform-origin: 0 50%; }
+  [data-fx="page"].in { opacity: 1; transform: none; }
+
   @media (max-width: 700px) {
     :root { --pad-x: 12px; --gap: 12px; }
     .hero-title .line:nth-child(2) { padding-left: .5em; }
@@ -1034,6 +1141,44 @@
           <a class="btn" href="https://t.me/Motvolkovv" target="_blank" rel="noopener">Записаться на разбор <span>→</span></a>
           <a class="link" href="https://t.me/production_cases" target="_blank" rel="noopener">Смотреть все кейсы</a>
         </div>
+      </div>
+    </section>
+
+    <!-- 9 · Европа: Карлов мост в Праге + FAQ -->
+    <section class="plate video fx faq-plate" data-fx="blinds">
+      <div class="media"><video muted loop playsinline preload="metadata"
+        src="https://assets.mixkit.co/videos/27963/27963-720.mp4"></video></div>
+      <div class="agency-shade" aria-hidden="true"></div>
+      <h2 class="faq-title">
+        <span class="big" aria-label="FAQ"><span class="ch" style="transition-delay:1.1s">F</span><span class="ch" style="transition-delay:1.28s">A</span><span class="ch" style="transition-delay:1.46s">Q</span></span>
+        <span class="sub">Frequently Asked Questions</span>
+      </h2>
+    </section>
+
+    <!-- 10 · бумага · FAQ: вопросы раскрываются при наведении -->
+    <section class="plate paper fx faq" data-fx="page" id="faq">
+      <div class="tear" aria-hidden="true"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div>
+      <span class="qmark" aria-hidden="true">?</span>
+      <div class="content">
+        <p class="kicker"><span class="dot"></span>FAQ</p>
+        <h2><span class="line"><span>Частые</span></span><span class="line"><span>вопросы</span></span></h2>
+
+        <div class="list">
+          <div class="qa" style="--d:.8s">
+            <button class="q" aria-expanded="false"><span class="n">01</span><span class="t">Какие соцсети вы продюсируете?</span><span class="pm" aria-hidden="true"></span></button>
+            <div class="a"><div><p>Основной упор идёт на Instagram с дублированием контента в TikTok. Мы специализируемся на коротком контенте.</p></div></div>
+          </div>
+          <div class="qa" style="--d:.95s">
+            <button class="q" aria-expanded="false"><span class="n">02</span><span class="t">За сколько мы добьёмся первых результатов?</span><span class="pm" aria-hidden="true"></span></button>
+            <div class="a"><div><p>Всё индивидуально, но, как показывает практика, — не более двух недель до первых серьёзных просмотров.</p></div></div>
+          </div>
+          <div class="qa" style="--d:1.1s">
+            <button class="q" aria-expanded="false"><span class="n">03</span><span class="t">Почему стоит выбрать вас?</span><span class="pm" aria-hidden="true"></span></button>
+            <div class="a"><div><p>Потому что мы не «агентство для агентства» — мы реальная, сплочённая команда, которая показывает результаты для наших клиентов.</p></div></div>
+          </div>
+        </div>
+
+        <a class="more" href="https://t.me/Motvolkovv" target="_blank" rel="noopener">Остались вопросы? Напишите нам <span>→</span></a>
 
         <div class="foot">
           <span><svg viewBox="0 0 100 120" aria-hidden="true"><path d="M50 4C61 18 66 38 57 60H43C34 38 39 18 50 4Z"/><path d="M43 62C30 61 12 53 10 36C9 24 20 18 28 25C20 27 19 38 27 44C33 49 39 51 45 53Z"/><path d="M57 62C70 61 88 53 90 36C91 24 80 18 72 25C80 27 81 38 73 44C67 49 61 51 55 53Z"/><rect x="28" y="60" width="44" height="8" rx="1.5"/><path d="M44 70L50 96L56 70Z"/></svg>Persona Agency × Matvey Volkov</span>
@@ -1160,6 +1305,17 @@
       f.style.setProperty('--tx', `${((e.clientY - r.top) / r.height - .5) * -10}deg`);
     });
     c.addEventListener('pointerleave', () => { f.style.setProperty('--tx', '0deg'); f.style.setProperty('--ty', '0deg'); });
+  });
+
+  /* FAQ: на компьютере ответ раскрывается при наведении, по нажатию — закрепляется (телефон, клавиатура) */
+  document.querySelectorAll('.faq .qa').forEach(qa => {
+    const btn = qa.querySelector('.q');
+    btn.addEventListener('click', () => {
+      const open = !qa.classList.contains('open');
+      document.querySelectorAll('.faq .qa.open').forEach(o => { o.classList.remove('open'); o.querySelector('.q').setAttribute('aria-expanded', 'false'); });
+      qa.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    });
   });
 
   /* числа в списках набегают от нуля; разделитель тысяч — точка, как в тексте клиента */
