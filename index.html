@@ -443,6 +443,50 @@
     font-family: "Manrope", sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: 0; transition: opacity 1.2s ease 2s; }
   .consult .foot svg { width: 14px; height: 17px; fill: var(--white); vertical-align: -3px; margin-right: 10px; }
 
+  /* печать-штамп: с размаху ставится на бумагу, от неё расходится волна, надпись по кругу вращается */
+  .consult .seal {
+    position: absolute; z-index: 3; top: clamp(70px, 11vh, 130px); right: clamp(20px, 6vw, 110px);
+    width: clamp(120px, 14vw, 220px); aspect-ratio: 1; display: block; color: var(--white);
+    opacity: 0; transform: scale(2.3) rotate(-35deg); filter: blur(4px);
+    transition: opacity .35s ease 1.2s, transform .9s cubic-bezier(.3, 1.55, .5, 1) 1.2s, filter .5s ease 1.2s;
+  }
+  .consult .seal svg { width: 100%; height: 100%; overflow: visible; }
+  .consult .seal .ring { transform-origin: 100px 100px; animation: spin 26s linear infinite; }
+  .consult .seal:hover .ring { animation-duration: 6s; }
+  .consult .seal circle { fill: none; stroke: currentColor; }
+  .consult .seal text { fill: currentColor; font-family: "Manrope", sans-serif; font-weight: 500; font-size: 13px; letter-spacing: .12em; }
+  .consult .seal .fl { fill: currentColor; }
+  .consult .seal::after {                             /* волна от удара печати */
+    content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(239,238,233,.7);
+    opacity: 0; transform: scale(.9);
+  }
+  .consult.in .seal { opacity: 1; transform: scale(1) rotate(-8deg); filter: none; }
+  .consult.in .seal::after { animation: shock 1.1s ease-out 1.75s forwards; }
+  @keyframes shock { 0% { opacity: .8; transform: scale(.95) } 100% { opacity: 0; transform: scale(1.7) } }
+
+  /* путь по шагам: точка бежит 01 → 02 → 03, шаг под ней подсвечивается */
+  .consult .steps { position: relative; }
+  .consult .steps::after {
+    content: "";
+    position: absolute; top: -3px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--white);
+    box-shadow: 0 0 12px 3px rgba(239,238,233,.55); opacity: 0;
+  }
+  .consult.in .steps::after { animation: run 7.5s var(--ease-io) 2.4s infinite; }
+  @keyframes run {
+    0% { left: 0; opacity: 0 } 6% { opacity: 1 } 88% { opacity: 1 } 100% { left: calc(100% - 7px); opacity: 0 }
+  }
+  .consult .steps li h3, .consult .steps li .n { transition: opacity .6s ease, transform .6s var(--ease-out); }
+  .consult.in .steps li { animation: glow 7.5s ease-in-out infinite; animation-delay: calc(2.4s + var(--g)); }
+  @keyframes glow {
+    0%, 22%, 100% { text-shadow: none }
+    8%, 14% { text-shadow: 0 0 18px rgba(239,238,233,.45) }
+  }
+  @media (max-width: 900px) {
+    .consult .steps::after { display: none; }
+    .consult .content { padding-top: 170px; }
+    .consult .seal { top: 46px; right: 14px; width: 104px; }
+  }
+
   .consult.in .kicker { opacity: .85; }
   .consult.in h2 .line > span { transform: none; }
   .consult.in .lead { opacity: .85; transform: none; }
@@ -949,15 +993,27 @@
     <!-- 8 · бумага · бесплатный разбор и контакты -->
     <section class="plate paper fx consult" data-fx="develop" id="contact">
       <div class="tear" aria-hidden="true"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div>
+      <a class="seal" href="https://t.me/Motvolkovv" target="_blank" rel="noopener" aria-label="Записаться на бесплатный разбор">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="sealPath" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0"/></defs>
+          <circle cx="100" cy="100" r="96" stroke-width="1"/>
+          <circle cx="100" cy="100" r="92" stroke-width=".5" stroke-dasharray="1.5 3"/>
+          <circle cx="100" cy="100" r="56" stroke-width="1"/>
+          <g class="ring"><text><textPath href="#sealPath" textLength="462">FREE CONSULTATION ✦ PERSONA AGENCY ✦</textPath></text></g>
+          <svg x="76" y="72" width="48" height="58" viewBox="0 0 100 120" class="fl">
+            <path d="M50 4C61 18 66 38 57 60H43C34 38 39 18 50 4Z"/><path d="M43 62C30 61 12 53 10 36C9 24 20 18 28 25C20 27 19 38 27 44C33 49 39 51 45 53Z"/><path d="M57 62C70 61 88 53 90 36C91 24 80 18 72 25C80 27 81 38 73 44C67 49 61 51 55 53Z"/><rect x="28" y="60" width="44" height="8" rx="1.5"/><path d="M44 70L50 96L56 70Z"/>
+          </svg>
+        </svg>
+      </a>
       <div class="content">
         <p class="kicker"><span class="dot"></span>Free consultation</p>
         <h2><span class="line"><span>Бесплатный</span></span><span class="line"><span>разбор</span></span></h2>
         <p class="lead">Бесплатный разбор, где мы определим стратегию и условия работы. Поставим цели, пообщаемся и начнём работу.</p>
 
         <ol class="steps">
-          <li style="--d:.9s"><span class="n">01</span><h3>Разбор</h3><p>Смотрим ваш аккаунт, контент и аудиторию: что уже работает, а что тормозит рост.</p></li>
-          <li style="--d:1.05s"><span class="n">02</span><h3>Стратегия</h3><p>Определяем стратегию, цели и условия работы — понятно, по цифрам, без воды.</p></li>
-          <li style="--d:1.2s"><span class="n">03</span><h3>Старт</h3><p>Пообщаемся, договоримся и сразу начинаем работу над вашими соцсетями.</p></li>
+          <li style="--d:.9s; --g:0s"><span class="n">01</span><h3>Разбор</h3><p>Смотрим ваш аккаунт, контент и аудиторию: что уже работает, а что тормозит рост.</p></li>
+          <li style="--d:1.05s; --g:2.3s"><span class="n">02</span><h3>Стратегия</h3><p>Определяем стратегию, цели и условия работы — понятно, по цифрам, без воды.</p></li>
+          <li style="--d:1.2s; --g:4.6s"><span class="n">03</span><h3>Старт</h3><p>Пообщаемся, договоримся и сразу начинаем работу над вашими соцсетями.</p></li>
         </ol>
 
         <div class="cta">
