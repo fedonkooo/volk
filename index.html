@@ -96,12 +96,44 @@
   body.phase-open .intro .seam { opacity: 0; }
   body.phase-done .intro { display: none; }
 
+  /* плавная прокрутка (Lenis) */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  /* ================= КУРСОР: лилия + кольцо ================= */
+  .cursor { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    html, body, a, button, .case { cursor: none; }
+    .cursor { display: block; position: fixed; inset: 0; z-index: 90; pointer-events: none; mix-blend-mode: difference; }
+    .cursor .c-ring, .cursor .c-dot { position: absolute; left: 0; top: 0; will-change: transform; }
+    .cursor .c-ring {
+      width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+      border: 1px solid #fff; display: grid; place-items: center;
+      transition: width .5s var(--ease-out), height .5s var(--ease-out), margin .5s var(--ease-out),
+                  background-color .4s ease, border-color .4s ease, opacity .4s ease;
+    }
+    .cursor .c-label {
+      font-family: "Bodoni Moda", serif; font-style: italic; font-size: 17px; color: #000;
+      opacity: 0; transform: scale(.6); transition: opacity .35s ease, transform .5s var(--ease-out);
+    }
+    .cursor .c-dot { width: 14px; height: 17px; margin: -8px 0 0 -7px; fill: #fff; transition: opacity .3s ease; }
+    .cursor.is-link .c-ring { width: 64px; height: 64px; margin: -32px 0 0 -32px; background: #fff; }
+    .cursor.is-case .c-ring { width: 96px; height: 96px; margin: -48px 0 0 -48px; background: #fff; }
+    .cursor.is-case .c-label { opacity: 1; transform: none; }
+    .cursor.is-link .c-dot, .cursor.is-case .c-dot { opacity: 0; }
+    .cursor.is-down .c-ring { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+    .cursor.is-hidden .c-ring, .cursor.is-hidden .c-dot { opacity: 0; }
+  }
+
   /* ================= ЛЕНТА ПЛАШЕК ================= */
   .stack {
     position: relative; z-index: 1;
     display: flex; flex-direction: column; gap: var(--gap);
     padding: var(--gap) var(--pad-x);
+    perspective: 2200px;                                /* для эффекта перелистывания */
   }
+  .plate { transform-origin: 50% 100%; }
   .plate {
     position: relative; overflow: hidden;
     width: 100%; height: 84vh; min-height: 440px;
@@ -121,7 +153,9 @@
     object-fit: cover;
     filter: grayscale(1) contrast(1.08) brightness(.9);
     will-change: transform;
+    opacity: 0; transition: opacity 1.4s ease;            /* проявляется, когда готов первый кадр */
   }
+  .video video.ready { opacity: 1; }
   .video::before {
     content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none;
     background-image: var(--grain); background-size: 180px;
@@ -283,10 +317,22 @@
     clip-path: inset(100% 0 0 0 round 16px);
     transition: transform .6s var(--ease-out), clip-path 1.6s var(--ease-io) calc(var(--d, 0s) + .2s);
   }
+  .case .frame::before {                              /* мерцающая заглушка, пока грузится ролик */
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, #0c0c0b 30%, #1d1d1b 50%, #0c0c0b 70%) 0 0 / 250% 100%;
+    animation: shimmer 1.8s linear infinite;
+    transition: opacity 1s ease;
+  }
+  @keyframes shimmer { from { background-position: 100% 0 } to { background-position: -150% 0 } }
+  .cases.in .case .frame.loaded::before { opacity: 0; transition-delay: calc(var(--d, 0s) + 1.3s); }
   .case .frame video, .case .frame img {
     position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-    filter: grayscale(1) contrast(1.05); transform: scale(1.06);
-    transition: filter .8s ease, transform 1.2s var(--ease-out);
+    opacity: 0; filter: grayscale(1) contrast(1.05) blur(16px); transform: scale(1.16);
+    transition: opacity 1.2s ease, filter 1.4s ease, transform 2s var(--ease-out);
+  }
+  .cases.in .case .frame .ready {                      /* ролик выплывает из размытия после раскрытия карточки */
+    opacity: 1; filter: grayscale(1) contrast(1.05) blur(0); transform: scale(1.06);
+    transition-delay: calc(var(--d, 0s) + .9s);
   }
   .case .frame img { object-position: 50% 0; animation: pan 14s ease-in-out infinite alternate; }   /* медленная «камера» по скриншоту */
   @keyframes pan { from { object-position: 50% 0 } to { object-position: 50% 100% } }
@@ -304,7 +350,7 @@
   .case .dur { bottom: 12px; right: 12px; display: flex; align-items: center; gap: 6px; }
   .case .dur::before { content: ""; border-left: 7px solid var(--white); border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent; }
   .case .idx { bottom: 10px; left: 14px; font-family: "Bodoni Moda", serif; font-style: italic; letter-spacing: 0; font-size: 15px; text-transform: none; }
-  .case:hover .frame video, .case:hover .frame img { filter: none; transform: scale(1); }   /* при наведении — цвет */
+  .cases.in .case:hover .frame .ready { filter: none; transform: scale(1); transition: opacity 1.2s ease, filter .8s ease, transform 1.2s var(--ease-out); transition-delay: 0s; }   /* при наведении — цвет */
 
   .case .meta { padding: 18px 2px 0; }
   .case .big { display: block; font-family: "Bodoni Moda", serif; font-weight: 400; font-size: clamp(34px, 3.4vw, 60px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: lining-nums; }
@@ -652,6 +698,12 @@
     </div>
   </div>
 
+  <!-- курсор: лилия и кольцо -->
+  <div class="cursor" aria-hidden="true">
+    <div class="c-ring"><span class="c-label">voir</span></div>
+    <svg class="c-dot" viewBox="0 0 100 120"><path d="M50 4C61 18 66 38 57 60H43C34 38 39 18 50 4Z"/><path d="M43 62C30 61 12 53 10 36C9 24 20 18 28 25C20 27 19 38 27 44C33 49 39 51 45 53Z"/><path d="M57 62C70 61 88 53 90 36C91 24 80 18 72 25C80 27 81 38 73 44C67 49 61 51 55 53Z"/><rect x="28" y="60" width="44" height="8" rx="1.5"/><path d="M44 70L50 96L56 70Z"/></svg>
+  </div>
+
   <main class="stack">
 
     <!-- 1 · Эйфелева башня в подсветке, вид с Трокадеро -->
@@ -751,7 +803,7 @@
         <div class="reel">
           <article class="case">
             <div class="float"><div class="frame">
-              <video muted loop playsinline preload="metadata" src="assets/cases/brius.mp4"></video>
+              <video muted loop playsinline preload="auto" src="assets/cases/brius.mp4?v=2"></video>
               <span class="chip">Instagram · Reels</span><span class="idx">01</span><span class="dur">0:20</span>
             </div></div>
             <div class="meta">
@@ -763,7 +815,7 @@
 
           <article class="case">
             <div class="float"><div class="frame">
-              <video muted loop playsinline preload="metadata" src="assets/cases/fenomen.mp4"></video>
+              <video muted loop playsinline preload="auto" src="assets/cases/fenomen.mp4?v=2"></video>
               <span class="chip">TikTok</span><span class="idx">02</span><span class="dur">0:38</span>
             </div></div>
             <div class="meta">
@@ -811,6 +863,7 @@
 
   </main>
 
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="assets/knight.js"></script>
 <script>
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -975,9 +1028,20 @@
     setTimeout(r, 3500);                         // не ждём медленную сеть дольше
   });
 
+  /* плавная прокрутка с инерцией; при «уменьшить движение» — обычная */
+  const lenis = (!reduce && window.Lenis)
+    ? new Lenis({ duration: 1.35, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), wheelMultiplier: .9 })
+    : null;
+  if (lenis) {
+    lenis.on('scroll', checkPlates);
+    const loop = t => { lenis.raf(t); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+
   (async () => {
     if (reduce) { body.classList.remove('locked'); plates.forEach(p => { p.classList.add('in'); countUp(p); }); return; }
     window.scrollTo(0, 0);
+    if (lenis) lenis.stop();                     // во время открытия страницу не крутим
     await Promise.all([sleep(2300), heroReady]);
     body.classList.add('phase-seam');
     await sleep(900);
@@ -986,6 +1050,7 @@
     await sleep(1500);
     body.classList.add('phase-done');
     body.classList.remove('locked');
+    if (lenis) lenis.start();
     checkPlates();
   })();
 
@@ -993,8 +1058,22 @@
   addEventListener('scroll', checkPlates, { passive: true });
   addEventListener('resize', checkPlates);
 
-  /* плавный параллакс внутри видео */
+  /* видео и снимки проявляются мягко, когда готов первый кадр — без рывков */
+  const markReady = el => {
+    el.classList.add('ready');
+    const f = el.closest('.frame'); if (f) f.classList.add('loaded');
+  };
+  document.querySelectorAll('.plate video, .case .frame img').forEach(el => {
+    if (el.tagName === 'IMG') {
+      el.complete && el.naturalWidth ? markReady(el) : el.addEventListener('load', () => markReady(el), { once: true });
+    } else {
+      el.readyState >= 2 ? markReady(el) : el.addEventListener('loadeddata', () => markReady(el), { once: true });
+    }
+  });
+
+  /* параллакс внутри видео + «перелистывание»: уходящая вверх плашка слегка уменьшается и откидывается назад */
   const vids = plates.filter(p => p.classList.contains('video')).map(p => ({ p, v: p.querySelector('video'), y: 0 }));
+  const flips = plates.map(p => ({ p, k: 0 }));
   const tick = () => {
     const vh = innerHeight;
     for (const o of vids) {
@@ -1003,6 +1082,16 @@
       const target = ((r.top + r.height / 2) - vh / 2) / vh * -9;   // в процентах
       o.y += (target - o.y) * .08;
       o.v.style.transform = `translate3d(0, ${o.y.toFixed(3)}%, 0)`;
+    }
+    for (const o of flips) {
+      const r = o.p.getBoundingClientRect();
+      if (r.top > vh || r.bottom < -vh) continue;
+      const target = Math.min(1, Math.max(0, (vh * .55 - r.bottom) / (vh * .55)));   // 0 — плашка на экране, 1 — ушла вверх
+      o.k += (target - o.k) * .12;
+      if (o.k < .001 && target === 0) { o.p.style.scale = ''; o.p.style.rotate = ''; o.p.style.translate = ''; continue; }
+      o.p.style.scale = (1 - o.k * .08).toFixed(4);
+      o.p.style.rotate = `x ${(o.k * 9).toFixed(3)}deg`;
+      o.p.style.translate = `0 ${(o.k * 6).toFixed(2)}vh`;
     }
     requestAnimationFrame(tick);
   };
@@ -1059,6 +1148,33 @@
   addEventListener('load', tearAll);                 // высота плашки с текстом меняется после загрузки шрифтов
   document.fonts && document.fonts.ready.then(tearAll);
   let tearTimer; addEventListener('resize', () => { clearTimeout(tearTimer); tearTimer = setTimeout(tearAll, 200); });
+
+  /* курсор: лилия точно под мышью и наклоняется по ходу движения, кольцо догоняет с задержкой */
+  (() => {
+    const cur = document.querySelector('.cursor');
+    if (!cur || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const ring = cur.querySelector('.c-ring'), dot = cur.querySelector('.c-dot');
+    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my, tilt = 0, lastX = mx;
+    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; cur.classList.remove('is-hidden'); }, { passive: true });
+    document.addEventListener('pointerleave', () => cur.classList.add('is-hidden'));
+    addEventListener('pointerdown', () => cur.classList.add('is-down'));
+    addEventListener('pointerup', () => cur.classList.remove('is-down'));
+    document.addEventListener('pointerover', e => {
+      const t = e.target;
+      cur.classList.toggle('is-case', !!t.closest('.case'));
+      cur.classList.toggle('is-link', !t.closest('.case') && !!t.closest('a, button'));
+    });
+    const k = reduce ? 1 : .16;
+    const loop = () => {
+      rx += (mx - rx) * k; ry += (my - ry) * k;
+      tilt += (Math.max(-25, Math.min(25, (mx - lastX) * 1.6)) - tilt) * .15; lastX = mx;
+      dot.style.transform = `translate(${mx}px, ${my}px) rotate(${tilt.toFixed(2)}deg)`;
+      ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
+      requestAnimationFrame(loop);
+    };
+    cur.classList.add('is-hidden');                    // показываем после первого движения мыши
+    requestAnimationFrame(loop);
+  })();
 </script>
 </body>
 </html>
