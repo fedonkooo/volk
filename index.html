@@ -373,6 +373,89 @@
     .case:nth-child(even) { margin-top: 0; }
   }
 
+  /* --- «free consultation» на видео с Италией --- */
+  .fc-title {
+    position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--white); text-align: center; font-family: "Bodoni Moda", "Didot", serif; font-weight: 400; line-height: .88;
+  }
+  .fc-title .free { font-size: clamp(76px, 15vw, 280px); letter-spacing: -.03em; }
+  .fc-title .free .ch { display: inline-block; opacity: 0; transform: translateY(-40%) rotate(-6deg); filter: blur(6px);
+    transition: opacity 1s ease, transform 1.4s var(--ease-out), filter 1.2s ease; }
+  .fc-title .cons {                                   /* «consultation» пишется слева направо, как от руки */
+    font-style: italic; font-size: clamp(50px, 11vw, 206px); letter-spacing: -.02em; padding: 0 .1em .12em;
+    clip-path: inset(0 100% 0 0); transition: clip-path 2.4s var(--ease-io) 1.9s;
+  }
+  .fc-plate.in .fc-title .free .ch { opacity: 1; transform: none; filter: none; }
+  .fc-plate.in .fc-title .cons { clip-path: inset(0 -5% 0 0); }
+
+  /* ================= ФИНАЛ: бесплатный разбор ================= */
+  .plate.consult { height: auto; min-height: 84vh; }
+  .consult .content { position: relative; z-index: 2; padding: clamp(90px, 14vh, 150px) clamp(22px, 6vw, 110px) clamp(40px, 7vh, 70px); color: var(--white); }
+  .consult .kicker {
+    display: flex; align-items: center; gap: 12px;
+    font-family: "Manrope", sans-serif; font-weight: 500; font-size: 12px; letter-spacing: .38em; text-transform: uppercase;
+    opacity: 0; transition: opacity 1s ease .3s;
+  }
+  .consult .kicker .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--white); animation: pulse 2.4s ease-in-out infinite; }
+  .consult h2 {
+    margin-top: clamp(16px, 2.6vh, 28px);
+    font-family: "Bodoni Moda", serif; font-weight: 400; font-size: clamp(40px, 6vw, 112px); line-height: .95; letter-spacing: -.02em;
+  }
+  .consult h2 .line { display: block; overflow: hidden; padding: 0 .1em .14em 0; margin-bottom: -.1em; }
+  .consult h2 .line > span { display: inline-block; transform: translateY(110%); transition: transform 1.4s var(--ease-out) .4s; }
+  .consult h2 .line:nth-child(2) > span { font-style: italic; transition-delay: .55s; }
+  .consult .lead {
+    margin-top: clamp(20px, 3.4vh, 36px); max-width: 46ch;
+    font-family: "Manrope", sans-serif; font-size: clamp(16px, 1.4vw, 21px); line-height: 1.55;
+    opacity: 0; transform: translateY(14px); transition: opacity 1.2s ease .8s, transform 1.4s var(--ease-out) .8s;
+  }
+  .consult .steps { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 3vw, 48px); margin-top: clamp(40px, 7vh, 80px); }
+  .consult .steps li { position: relative; padding-top: 22px; opacity: 0; transform: translateY(24px);
+    transition: opacity 1s ease var(--d), transform 1.3s var(--ease-out) var(--d); }
+  .consult .steps li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: rgba(239,238,233,.25);
+    transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease-io) var(--d); }
+  .consult .steps .n { font-family: "Bodoni Moda", serif; font-style: italic; font-size: 20px; opacity: .6; }
+  .consult .steps h3 { margin-top: 10px; font-family: "Bodoni Moda", serif; font-weight: 400; font-size: clamp(24px, 2.2vw, 36px); }
+  .consult .steps p { margin-top: 8px; font-family: "Manrope", sans-serif; font-size: 14px; line-height: 1.5; opacity: .72; max-width: 32ch; }
+
+  .consult .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; margin-top: clamp(44px, 8vh, 90px);
+    opacity: 0; transform: translateY(16px); transition: opacity 1.2s ease 1.5s, transform 1.4s var(--ease-out) 1.5s; }
+  .consult .btn {                                     /* главная кнопка: слегка тянется за курсором, по ней пробегает блик */
+    position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 16px;
+    padding: 22px 34px; border-radius: 999px; background: var(--white); color: #111; text-decoration: none;
+    font-family: "Manrope", sans-serif; font-weight: 500; font-size: 14px; letter-spacing: .2em; text-transform: uppercase;
+    transform: translate(var(--bx, 0), var(--by, 0)); transition: transform .5s var(--ease-out);
+  }
+  .consult .btn::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent);
+    animation: sheen 3.6s ease-in-out 2.4s infinite;
+  }
+  @keyframes sheen { 0% { left: -60% } 45%, 100% { left: 130% } }
+  .consult .btn span { transition: transform .5s var(--ease-out); }
+  .consult .btn:hover span { transform: translateX(6px); }
+  .consult .link { color: var(--white); text-decoration: none; font-family: "Manrope", sans-serif; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; opacity: .75;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; padding-bottom: 4px; transition: background-size .6s var(--ease-out), opacity .3s; }
+  .consult .link:hover { background-size: 100% 1px; opacity: 1; }
+
+  .consult .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-top: clamp(60px, 11vh, 120px); padding-top: 22px; border-top: 1px solid rgba(239,238,233,.14);
+    font-family: "Manrope", sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: 0; transition: opacity 1.2s ease 2s; }
+  .consult .foot svg { width: 14px; height: 17px; fill: var(--white); vertical-align: -3px; margin-right: 10px; }
+
+  .consult.in .kicker { opacity: .85; }
+  .consult.in h2 .line > span { transform: none; }
+  .consult.in .lead { opacity: .85; transform: none; }
+  .consult.in .steps li { opacity: 1; transform: none; }
+  .consult.in .steps li::before { transform: scaleX(1); }
+  .consult.in .cta { opacity: 1; transform: none; }
+  .consult.in .foot { opacity: .5; }
+
+  @media (max-width: 900px) {
+    .consult .steps { grid-template-columns: 1fr; }
+    .consult .btn { padding: 20px 26px; letter-spacing: .14em; }
+  }
+
   /* --- рваная бумага --- */
   .paper { overflow: visible; }
   .tear { position: absolute; inset: 0; }
@@ -730,8 +813,8 @@
           <h2><span class="line"><span>Matvey</span></span><span class="line"><span>Volkov</span></span></h2>
           <ul>
             <li>Social Media Producer</li>
-            <li>&gt;1 year in sphere</li>
-            <li><a href="https://instagram.com/motvolkov" target="_blank" rel="noopener">@motvolkov</a></li>
+            <li>&gt;2.5 years in sphere</li>
+            <li><a href="https://t.me/motvolkov" target="_blank" rel="noopener">@motvolkov</a></li>
           </ul>
         </div>
 
@@ -852,14 +935,42 @@
       </div>
     </section>
 
-    <!-- 7 · Париж с высоты -->
-    <section class="plate video fx" data-fx="split" aria-hidden="true">
+    <!-- 7 · Италия: Позитано + free consultation -->
+    <section class="plate video fx fc-plate" data-fx="split">
       <div class="media"><video muted loop playsinline preload="metadata"
-        src="https://videos.pexels.com/video-files/36492322/15473977_1920_1080_25fps.mp4"></video></div>
+        src="https://videos.pexels.com/video-files/20156101/20156101-hd_1920_1080_24fps.mp4"></video></div>
+      <div class="agency-shade" aria-hidden="true"></div>
+      <h2 class="fc-title">
+        <span class="free" aria-label="free"><span class="ch" style="transition-delay:1.2s">f</span><span class="ch" style="transition-delay:1.32s">r</span><span class="ch" style="transition-delay:1.44s">e</span><span class="ch" style="transition-delay:1.56s">e</span></span>
+        <span class="cons">consultation</span>
+      </h2>
     </section>
 
-    <!-- 8 · бумага (подвал) -->
-    <section class="plate paper fx short" data-fx="develop" aria-hidden="true"><div class="tear"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div></section>
+    <!-- 8 · бумага · бесплатный разбор и контакты -->
+    <section class="plate paper fx consult" data-fx="develop" id="contact">
+      <div class="tear" aria-hidden="true"><div class="shade"></div><div class="edge"></div><div class="sheet"></div></div>
+      <div class="content">
+        <p class="kicker"><span class="dot"></span>Free consultation</p>
+        <h2><span class="line"><span>Бесплатный</span></span><span class="line"><span>разбор</span></span></h2>
+        <p class="lead">Бесплатный разбор, где мы определим стратегию и условия работы. Поставим цели, пообщаемся и начнём работу.</p>
+
+        <ol class="steps">
+          <li style="--d:.9s"><span class="n">01</span><h3>Разбор</h3><p>Смотрим ваш аккаунт, контент и аудиторию: что уже работает, а что тормозит рост.</p></li>
+          <li style="--d:1.05s"><span class="n">02</span><h3>Стратегия</h3><p>Определяем стратегию, цели и условия работы — понятно, по цифрам, без воды.</p></li>
+          <li style="--d:1.2s"><span class="n">03</span><h3>Старт</h3><p>Пообщаемся, договоримся и сразу начинаем работу над вашими соцсетями.</p></li>
+        </ol>
+
+        <div class="cta">
+          <a class="btn" href="https://t.me/Motvolkovv" target="_blank" rel="noopener">Записаться на разбор <span>→</span></a>
+          <a class="link" href="https://t.me/production_cases" target="_blank" rel="noopener">Смотреть все кейсы</a>
+        </div>
+
+        <div class="foot">
+          <span><svg viewBox="0 0 100 120" aria-hidden="true"><path d="M50 4C61 18 66 38 57 60H43C34 38 39 18 50 4Z"/><path d="M43 62C30 61 12 53 10 36C9 24 20 18 28 25C20 27 19 38 27 44C33 49 39 51 45 53Z"/><path d="M57 62C70 61 88 53 90 36C91 24 80 18 72 25C80 27 81 38 73 44C67 49 61 51 55 53Z"/><rect x="28" y="60" width="44" height="8" rx="1.5"/><path d="M44 70L50 96L56 70Z"/></svg>Persona Agency × Matvey Volkov</span>
+          <span>© 2026</span>
+        </div>
+      </div>
+    </section>
 
   </main>
 
@@ -1030,7 +1141,7 @@
 
   /* плавная прокрутка с инерцией; при «уменьшить движение» — обычная */
   const lenis = (!reduce && window.Lenis)
-    ? new Lenis({ duration: 1.35, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), wheelMultiplier: .9 })
+    ? new Lenis({ duration: .85, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), wheelMultiplier: 1 })
     : null;
   if (lenis) {
     lenis.on('scroll', checkPlates);
@@ -1174,6 +1285,16 @@
     };
     cur.classList.add('is-hidden');                    // показываем после первого движения мыши
     requestAnimationFrame(loop);
+
+    /* главная кнопка «магнитится» к курсору */
+    document.querySelectorAll('.consult .btn').forEach(b => {
+      b.addEventListener('pointermove', e => {
+        const r = b.getBoundingClientRect();
+        b.style.setProperty('--bx', `${((e.clientX - r.left) / r.width - .5) * 18}px`);
+        b.style.setProperty('--by', `${((e.clientY - r.top) / r.height - .5) * 12}px`);
+      });
+      b.addEventListener('pointerleave', () => { b.style.setProperty('--bx', '0px'); b.style.setProperty('--by', '0px'); });
+    });
   })();
 </script>
 </body>
